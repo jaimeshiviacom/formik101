@@ -1,15 +1,11 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-import Audience from "./containers/Audience";
+import Main from "./Main";
 
 class App extends Component {
   state = {};
   render() {
-    return (
-      <div>
-        <Audience />
-      </div>
-    );
+    return <Main />;
   }
 }
 
