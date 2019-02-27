@@ -189,14 +189,15 @@ const profiles = [
 ];
 
 class Profile extends Component {
-  state = { label: "", options: [], answers: [] };
+  state = { label: "", type: "", options: [], answers: [] };
 
   handleRadioBox = e => {
-    let name = e.target.name;
-    let value = e.target.value;
+    // Todo: fix the issue of qtype
+    let { name, value, id } = e.target;
     // when switch to another question, then clear options and answers
     this.setState({
       [name]: value,
+      type: id,
       options: [],
       answers: []
     });
@@ -235,7 +236,11 @@ class Profile extends Component {
         : []
       : [];
     const answerList = label
-      ? profiles.filter(item => item.label === label)[0].answers
+      ? profiles
+          .filter(item => item.label === label)[0]
+          .hasOwnProperty("answers")
+        ? profiles.filter(item => item.label === label)[0].answers
+        : []
       : [];
 
     return (
@@ -248,7 +253,6 @@ class Profile extends Component {
           selectedItem={label}
           handleChange={this.handleRadioBox}
         />
-        <br />
         {/* options */}
         <CheckBox
           name="options"
@@ -256,7 +260,6 @@ class Profile extends Component {
           selectedItems={options}
           handleChange={this.handleCheckBox}
         />
-        <br />
         {/* answers */}
         <CheckBox
           name="answers"
@@ -264,7 +267,6 @@ class Profile extends Component {
           selectedItems={answers}
           handleChange={this.handleCheckBox}
         />
-        <br />
         <button onClick={this.handleClick} disabled={!answers.length}>
           SAVE
         </button>

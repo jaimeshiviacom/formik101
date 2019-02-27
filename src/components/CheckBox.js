@@ -24,6 +24,7 @@ const CheckBox = ({ list, name, selectedItems, handleChange }) => (
         </div>
       );
     })}
+    <br />
   </div>
 );
 

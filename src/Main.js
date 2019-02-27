@@ -21,8 +21,8 @@ class Main extends Component {
     return (
       <form>
         <Audience handleSave={this.handleSave} />
-        <Filter handleSave={this.handleSave} />
-        <Profile handleSave={this.handleSave} />
+        {/* <Filter handleSave={this.handleSave} />
+        <Profile handleSave={this.handleSave} /> */}
         <pre>{JSON.stringify(this.state, null, 2)}</pre>
       </form>
     );

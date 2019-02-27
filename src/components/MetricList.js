@@ -1,6 +1,5 @@
-import React, { Component } from "react";
-import RadioBox from "../components/RadioBox";
-import CheckBox from "../components/CheckBox";
+import React from "react";
+import CheckBox from "./CheckBox";
 
 const audience = [
   {
@@ -472,110 +471,72 @@ const audience = [
   }
 ];
 
-class Metric extends Component {
-  state = {
-    label: "",
-    type: "",
-    options: [],
-    answers: []
-  };
+const MetricList = ({
+  list,
+  editedMetric,
+  handleDelete,
+  handleEdit,
+  handleCheckBox,
+  handleEditSave
+}) => {
+  const { label, options, answers } = editedMetric;
+  const optionList = label
+    ? audience.filter(item => item.label === label)[0].hasOwnProperty("options")
+      ? audience.filter(item => item.label === label)[0].options
+      : []
+    : [];
+  const answerList = label
+    ? audience.filter(item => item.label === label)[0].hasOwnProperty("answers")
+      ? audience.filter(item => item.label === label)[0].answers
+      : []
+    : [];
 
-  handleRadioBox = e => {
-    // Todo: fix the issue of qtype
-    let { name, value, id } = e.target;
-    // when switch to another question, then clear options and answers
-    this.setState({
-      [name]: value,
-      type: id,
-      options: [],
-      answers: []
-    });
-  };
+  return (
+    <div>
+      <h4>Selected Metrics</h4>
+      <ul>
+        {list.map((item, index) => {
+          const optionListView = item.label === label ? optionList : [];
+          const answerListView = item.label === label ? answerList : [];
+          const visiable = item.label === label;
+          return (
+            <li key={index}>
+              <span>{item.label}</span>
+              <button value={item.label} onClick={handleDelete}>
+                delete
+              </button>
+              <button value={item.label} onClick={handleEdit}>
+                edit
+              </button>
+              <div>
+                {/* options */}
+                <CheckBox
+                  name="options"
+                  list={optionListView}
+                  selectedItems={options}
+                  handleChange={handleCheckBox}
+                />
+                {/* answers */}
+                <CheckBox
+                  name="answers"
+                  list={answerListView}
+                  selectedItems={answers}
+                  handleChange={handleCheckBox}
+                />
+                <button
+                  onClick={handleEditSave}
+                  hidden={!visiable}
+                  disabled={answers && !answers.length}
+                >
+                  SAVE
+                </button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+};
 
-  handleCheckBox = e => {
-    let name = e.target.name;
-    let newSelection = parseInt(e.target.value);
-    let newSelectionArray;
-    if (this.state[name].includes(newSelection)) {
-      newSelectionArray = this.state[name].filter(
-        item => item !== newSelection
-      );
-    } else {
-      newSelectionArray = [...this.state[name], newSelection];
-    }
-    this.setState({ [name]: newSelectionArray });
-  };
-
-  handleSave = () => {
-    this.props.handleSave(this.state);
-    this.setState({
-      label: "",
-      type: "",
-      options: [],
-      answers: []
-    });
-  };
-
-  handleCancel = () => {
-    this.setState({
-      label: "",
-      type: "",
-      options: [],
-      answers: []
-    });
-  };
-
-  render() {
-    const { label, options, answers } = this.state;
-    const optionList = label
-      ? audience
-          .filter(item => item.label === label)[0]
-          .hasOwnProperty("options")
-        ? audience.filter(item => item.label === label)[0].options
-        : []
-      : [];
-    const answerList = label
-      ? audience
-          .filter(item => item.label === label)[0]
-          .hasOwnProperty("answers")
-        ? audience.filter(item => item.label === label)[0].answers
-        : []
-      : [];
-
-    return (
-      <div>
-        <h3>Audience</h3>
-        {/* label */}
-        <RadioBox
-          name="label"
-          list={audience}
-          selectedItem={label}
-          handleChange={this.handleRadioBox}
-        />
-        {/* options */}
-        <CheckBox
-          name="options"
-          list={optionList}
-          selectedItems={options}
-          handleChange={this.handleCheckBox}
-        />
-        {/* answers */}
-        <CheckBox
-          name="answers"
-          list={answerList}
-          selectedItems={answers}
-          handleChange={this.handleCheckBox}
-        />
-        <button onClick={this.handleSave} disabled={!answers.length}>
-          SAVE
-        </button>
-        <button onClick={this.handleCancel} disabled={!answers.length}>
-          CANCEL
-        </button>
-        {/* <pre>{JSON.stringify(this.state, null, 2)}</pre> */}
-      </div>
-    );
-  }
-}
-
-export default Metric;
+export default MetricList;

@@ -1,14 +1,14 @@
 import React, { Component } from "react";
 import RadioBox from "../components/RadioBox";
 import CheckBox from "../components/CheckBox";
+import AgeRange from "../components/AgeRange";
 
 const filters = [
-  // {
-  //   label: "Age",
-  //   type: "range",
-  //   min: 13,
-  //   max: 49
-  // },
+  {
+    label: "Age",
+    type: "range",
+    range: [13, 49]
+  },
   {
     label: "Gender",
     type: "choice",
@@ -33,14 +33,15 @@ const filters = [
 ];
 
 class Filter extends Component {
-  state = { label: "", options: [], answers: [] };
+  state = { label: "", type: "", options: [], answers: [] };
 
   handleRadioBox = e => {
-    let name = e.target.name;
-    let value = e.target.value;
+    // Todo: fix the issue of qtype
+    let { name, value, id } = e.target;
     // when switch to another question, then clear options and answers
     this.setState({
       [name]: value,
+      type: id,
       options: [],
       answers: []
     });
@@ -60,10 +61,20 @@ class Filter extends Component {
     this.setState({ [name]: newSelectionArray });
   };
 
+  handleAgeRange = e => {
+    let { name, value, id } = e.target;
+    let newSelectionArray = this.state.answers;
+    newSelectionArray[id] = value;
+    this.setState({
+      [name]: newSelectionArray
+    });
+  };
+
   handleClick = () => {
     this.props.handleSave(this.state, "filters");
     this.setState({
       label: "",
+      type: "",
       options: [],
       answers: []
     });
@@ -79,7 +90,16 @@ class Filter extends Component {
         : []
       : [];
     const answerList = label
-      ? filters.filter(item => item.label === label)[0].answers
+      ? filters
+          .filter(item => item.label === label)[0]
+          .hasOwnProperty("answers")
+        ? filters.filter(item => item.label === label)[0].answers
+        : []
+      : [];
+    const rangeList = label
+      ? filters.filter(item => item.label === label)[0].hasOwnProperty("range")
+        ? filters.filter(item => item.label === label)[0].range
+        : []
       : [];
 
     return (
@@ -92,7 +112,14 @@ class Filter extends Component {
           selectedItem={label}
           handleChange={this.handleRadioBox}
         />
-        <br />
+        {/* age range */}
+        <AgeRange
+          name="answers"
+          list={rangeList}
+          selectedRange={answers}
+          titleList={["Min", "Max"]}
+          handleChange={this.handleAgeRange}
+        />
         {/* options */}
         <CheckBox
           name="options"
@@ -100,7 +127,6 @@ class Filter extends Component {
           selectedItems={options}
           handleChange={this.handleCheckBox}
         />
-        <br />
         {/* answers */}
         <CheckBox
           name="answers"
@@ -108,7 +134,6 @@ class Filter extends Component {
           selectedItems={answers}
           handleChange={this.handleCheckBox}
         />
-        <br />
         <button onClick={this.handleClick} disabled={!answers.length}>
           SAVE
         </button>

@@ -5,6 +5,8 @@ const Input = ({
   type,
   name,
   value,
+  min,
+  max,
   placeholder,
   handleChange,
   disabled
@@ -15,6 +17,8 @@ const Input = ({
       type={type}
       name={name}
       value={value}
+      min={min}
+      max={max}
       placeholder={placeholder}
       onChange={handleChange}
       disabled={disabled}

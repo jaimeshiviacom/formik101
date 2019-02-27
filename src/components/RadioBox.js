@@ -15,6 +15,7 @@ const RadioBox = ({ list, name, selectedItem, handleChange }) => (
               type="radio"
               name={name}
               value={item.label}
+              id={item.type}
               onChange={handleChange}
               hidden
             />
@@ -23,6 +24,7 @@ const RadioBox = ({ list, name, selectedItem, handleChange }) => (
         </div>
       );
     })}
+    <br />
   </div>
 );
 
